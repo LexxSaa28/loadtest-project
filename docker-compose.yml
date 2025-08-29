@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # StatsD and Graphite
+  statsd:
+    image: graphiteapp/graphite-statsd:latest
+    ports:
+      - "80:80"
+      - "8125:8125/udp"
+      - "8126:8126"
+    volumes:
+      - graphite_data:/opt/graphite/storage/whisper
+    networks:
+      - monitoring
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - statsd
+    networks:
+      - monitoring
+
+  # REST Server
+  rest-server:
+    build: ./backend
+    ports:
+      - "9000:9000"
+    networks:
+      - backend
+
+  # gRPC Server
+  grpc-server:
+    build: ./grpc-server
+    ports:
+      - "9001:9001"
+    networks:
+      - backend
+
+  # WebSocket Server
+  ws-server:
+    build: ./ws-server
+    ports:
+      - "9002:9002"
+    networks:
+      - backend
+
+  # Load Test Client
+  load-test:
+    build: ./load-test
+    depends_on:
+      - rest-server
+      - grpc-server
+      - ws-server
+    networks:
+      - backend
+      - monitoring
+    volumes:
+      - ./results:/app/results
+
+volumes:
+  graphite_data:
+  grafana_data:
+
+networks:
+  backend:
+  monitoring:

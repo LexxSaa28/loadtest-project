@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "Load Test Performance",
+    "tags": ["loadtest"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Requests Per Second",
+        "type": "graph",
+        "span": 12,
+        "targets": [
+          {
+            "target": "stats.loadtest.requests.total",
+            "type": "timeserie",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Response Time (ms)",
+        "type": "graph",
+        "span": 12,
+        "targets": [
+          {
+            "target": "stats.loadtest.request.time",
+            "type": "timeserie",
+            "refId": "A"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package hello;
+
+option go_package = "grpc-server/proto";
+
+service HelloService {
+  rpc SayHello (HelloRequest) returns (HelloResponse) {}
+}
+
+message HelloRequest {
+  int32 size_kb = 1;
+}
+
+message HelloResponse {
+  string message = 1;
+  string timestamp = 2;
+  int32 payload_size_kb = 3;
+  string payload = 4;
+}
